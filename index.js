@@ -10,6 +10,13 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
+
+//Middleware
+app.use(cors());
+app.use(express.json());
+
+
+//db connection
 mongoose
   .connect(process.env.MONGO_DB_URI)
   .then(() => {
@@ -18,6 +25,10 @@ mongoose
   .catch((error) => {
     console.error("Failed to connect to MongoDB", error);
   });
+
+
+  app.use("/api/auth")
+
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`Server is running on ${process.env.PORT || 5000}`);
