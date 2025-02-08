@@ -10,11 +10,17 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
-
 //Middleware
 app.use(cors());
 app.use(express.json());
 
+//import routes
+import authRoutes from "./routes/authRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+
+//use Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 
 //db connection
 mongoose
@@ -25,10 +31,6 @@ mongoose
   .catch((error) => {
     console.error("Failed to connect to MongoDB", error);
   });
-
-
-  app.use("/api/auth")
-
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`Server is running on ${process.env.PORT || 5000}`);
