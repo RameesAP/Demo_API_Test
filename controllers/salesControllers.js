@@ -3,6 +3,7 @@ import ProductModel from "../models/ProductModel.js";
 
 export const createSale = async (req, res) => {
   try {
+    console.log("User from requestrrrrrrrrrrrrrrrr:", req.user); 
     const { productId, quantity } = req.body;
     const product = await ProductModel.findById(productId);
     if (!product) {
@@ -28,7 +29,20 @@ export const createSale = async (req, res) => {
     await product.save();
     res.status(201).json(sale);
   } catch (error) {
-    console.error(err.message);
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+};
+
+//get all sales
+export const getSales = async (req, res) => {
+  try {
+    const sales = await SaleModel.find()
+    .populate("product", "name price")
+    .populate("customer", "name email");
+    res.json(sales);
+  } catch (error) {
+    console.error(error.message);
     res.status(500).send("Server Error");
   }
 };

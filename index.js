@@ -17,10 +17,12 @@ app.use(express.json());
 //import routes
 import authRoutes from "./routes/authRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import saleRoutes from "./routes/saleRoutes.js";
 
 //use Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/sale", saleRoutes);
 
 //db connection
 mongoose
