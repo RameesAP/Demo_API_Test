@@ -79,3 +79,15 @@ export const login = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+export const getCurrentUser = async (req, res) => {
+  try {
+    // The `protect` middleware has already attached the user to `req.user`
+    res.status(200).json({
+      status: "success",
+      user: req.user, // Send user details to the frontend
+    });
+  } catch (error) {
+    console.error("Error fetching current user:", error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};

@@ -1,7 +1,13 @@
 import express from "express";
 import { protect, restrictToAdmin } from "../middleware/authMiddleware.js";
 import { getAllUsers } from "../controllers/adminController.js";
-import { createProduct, getAllProducts, getProductById } from "../controllers/ProductController.js";
+import {
+  createProduct,
+  deleteProduct,
+  getAllProducts,
+  getProductById,
+  updateProduct,
+} from "../controllers/ProductController.js";
 
 const router = express.Router();
 
@@ -18,5 +24,10 @@ router.get("/get-all-products", getAllProducts);
 //get one product
 router.get("/get-one/:id", getProductById);
 
+//update product
+router.put("/update-product/:id", protect, restrictToAdmin, updateProduct);
+
+//delete product
+router.delete("/delete-product/:id", protect, restrictToAdmin, deleteProduct);
 
 export default router;
