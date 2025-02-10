@@ -46,3 +46,39 @@ export const getSales = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
+
+//get total sales count and customers count
+export const getSalesStats = async (req, res) => {
+  try {
+    const sales = await SaleModel.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalSales: { $sum: "$totalAmount" },
+          count: { $sum: 1 }, // Total sales count
+        },
+      },
+    ]);
+
+    const customers = await SaleModel.aggregate([
+      {
+        $match: { customer: { $ne: null } }, // Exclude null customers
+      },
+      {
+        $group: {
+          _id: "$customer", // Group by unique customer
+        },
+      },
+      {
+        $count: "totalCustomers", // Count unique customers
+      },
+    ]);
+
+    const totalCustomers = customers.length > 0 ? customers[0].totalCustomers : 0;
+
+    res.json({ sales, totalCustomers });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+};
