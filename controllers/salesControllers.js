@@ -1,9 +1,10 @@
 import SaleModel from "../models/SaleModel.js";
 import ProductModel from "../models/ProductModel.js";
+import { pushSaleToFirestore } from "../services/firebaseService.js";
 
 export const createSale = async (req, res) => {
   try {
-    console.log("User from requestrrrrrrrrrrrrrrrr:", req.user); 
+    console.log("User from requestrrrrrrrrrrrrrrrr:", req.user);
     const { productId, quantity } = req.body;
     const product = await ProductModel.findById(productId);
     if (!product) {
@@ -27,6 +28,18 @@ export const createSale = async (req, res) => {
     // Update product stock
     product.stock -= quantity;
     await product.save();
+
+    // Push to Firebase Firestore
+    const firebaseSaleData = {
+      product: productId,
+      customer: req.user.id,
+      quantity,
+      totalAmount,
+      createdAt: new Date(),
+    };
+
+    await pushSaleToFirestore(firebaseSaleData);
+
     res.status(201).json(sale);
   } catch (error) {
     console.error(error.message);
@@ -38,8 +51,8 @@ export const createSale = async (req, res) => {
 export const getSales = async (req, res) => {
   try {
     const sales = await SaleModel.find()
-    .populate("product", "name price")
-    .populate("customer", "name email");
+      .populate("product", "name price")
+      .populate("customer", "name email");
     res.json(sales);
   } catch (error) {
     console.error(error.message);
@@ -74,7 +87,8 @@ export const getSalesStats = async (req, res) => {
       },
     ]);
 
-    const totalCustomers = customers.length > 0 ? customers[0].totalCustomers : 0;
+    const totalCustomers =
+      customers.length > 0 ? customers[0].totalCustomers : 0;
 
     res.json({ sales, totalCustomers });
   } catch (error) {
